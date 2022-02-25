@@ -1,0 +1,131 @@
+<script type="text/x-template" id="address-cascader">
+    <div class="area-address-cascader">
+        <el-cascader
+                :style="{'width':width}"
+                clearable
+                :size="size"
+                :value="value"
+                :options="options"
+                filterable
+                :props="propsData"
+                @change="handleChange">
+        </el-cascader>
+    </div>
+</script>
+<script>
+    $(function () {
+        Vue.component('address-cascader', {
+            template: '#address-cascader',
+            props: {
+                default: {
+                    type: Array,
+                    default: function () {
+                        return [];
+                    }
+                },
+                type: {
+                    type: String,
+                    default: "code"
+                },
+                size: {
+                    type: String,
+                    default: "small"
+                },
+                width: {
+                    type: String,
+                    default: "300px"
+                }
+            },
+            watch: {
+                type: function () {
+                    this.defaultData();
+                }
+            },
+            data: function () {
+                return {
+                    value: [],
+                    propsData: {
+                        expandTrigger: 'hover',
+                        value: "code",
+                        label: 'region_name'
+                    },
+                    options: []
+                }
+            },
+            mounted: function () {
+                this.getAreaTree();
+            },
+            methods: {
+                defaultData: function () {
+                    let defaultValue = this.default;
+                    if (defaultValue && this.type === 'region_name') {
+                        if (defaultValue.length === 3) {
+                            let item1 = this.options.find(function (res) {
+                                return defaultValue[0] === res.region_name;
+                            });
+                            if (!item1) {
+                                this.value = [];
+                                return
+                            }
+                            let item2 = item1.children.find(function (res) {
+                                return defaultValue[1] === res.region_name;
+                            });
+                            if (!item2) {
+                                this.value = [];
+                                return
+                            }
+                            let item3 = item2.children.find(function (res) {
+                                return defaultValue[2] === res.region_name;
+                            });
+                            if (!item3) {
+                                this.value = [];
+                                return
+                            }
+                            let code = [item1.code, item2.code, item3.code];
+                            console.log('code', code);
+                            this.value = code;
+                        }
+                    } else {
+                        this.value = defaultValue;
+                    }
+                    this.handleChange(this.value);
+                },
+                getAreaTree: function () {
+                    this.httpGet("{:url('component/geo/region')}", {}).then((res) => {
+                        if (res.status) {
+                            let {lists = []} = res.data
+                            this.options = lists;
+                            this.defaultData();
+                        }
+                    })
+                },
+                handleChange: function (code) {
+                    if (code.length === 3) {
+                        let item1 = this.options.find(function (res) {
+                            return parseInt(code[0]) === parseInt(res.code);
+                        });
+                        if (!item1) {
+                            return
+                        }
+                        let item2 = item1.children.find(function (res) {
+                            return parseInt(code[1]) === parseInt(res.code);
+                        });
+                        if (!item2) {
+                            return
+                        }
+                        let item3 = item2.children.find(function (res) {
+                            return parseInt(code[2]) === parseInt(res.code);
+                        });
+                        if (!item3) {
+                            return
+                        }
+                        let name = [item1.region_name, item2.region_name, item3.region_name];
+                        this.$emit('change', {code: code, name: name})
+                    } else {
+                        this.$emit('change', {code: code, name: []})
+                    }
+                }
+            }
+        });
+    })
+</script>

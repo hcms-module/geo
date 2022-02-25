@@ -1,0 +1,127 @@
+<div class="page-container" v-cloak>
+    <div>
+        <el-card>
+            <div slot="header" class="clearfix">
+                <span>地址联动组件</span>
+            </div>
+            <el-form size="small" :inline="true">
+                <el-form-item label="单选">
+                    <address-cascader :default='[12,1201,120103]' type="code" width="300px"
+                                      size="medium"
+                                      @change="handleChange"></address-cascader>
+                    <div class="form-small">
+                        <small>这里使用 code 初始化</small>
+                    </div>
+                </el-form-item>
+                <el-form-item label="多选">
+                    <address-cascader-muti :default='[["山西省","太原市","小店区"],["山西省","太原市","迎泽区"]]'
+                                           type="region_name"
+                                           width="350px"
+                                           size="medium"
+                                           @change="handleMutiChange"></address-cascader-muti>
+                    <div class="form-small">
+                        <small>这里使用 region_name 初始化</small>
+                    </div>
+                </el-form-item>
+                <el-form-item label="省市">
+                    <address-cascader-city :default='[12,1201]' type="code" width="300px"
+                                           size="medium"
+                                           @change="handleChange"></address-cascader-city>
+                    <div class="form-small">
+                        <small>这里使用 code 初始化</small>
+                    </div>
+                </el-form-item>
+            </el-form>
+            <el-form>
+                <el-form-item label="单选结果">
+                    {{ result }}
+                </el-form-item>
+                <el-form-item label="多选结果">
+                    {{ muti_result }}
+                </el-form-item>
+            </el-form>
+        </el-card>
+        <div style="margin-top: 10px;">
+            <el-card>
+                <div slot="header" class="clearfix">
+                    <span>定位获取</span>
+                </div>
+                <el-form size="small" label-width="120px">
+                    <el-form-item label="QQ地图KEY">
+                        <el-input style="width: 400px;" v-model="setting.geo_qq_key"></el-input>
+                        <div class="form-small">
+                            <small>配置完成之后需要刷新此页面</small>
+                        </div>
+                    </el-form-item>
+                    <el-form-item style="margin-top: 10px;">
+                        <div>
+                            <el-button @click="submitEvent" type="primary">保存</el-button>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="定位地址">
+                        <el-button type="primary" @click="show=true">选择定位</el-button>
+                        <!-- 组件-->
+                        <get-location @confirm="confirmLocation" :show="show" @close="show=false"></get-location>
+                    </el-form-item>
+                    <el-form-item label="单选结果">
+                        {{ location_result }}
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </div>
+    </div>
+</div>
+{hcmstag:include file="geo@/components/get-location"}
+{hcmstag:include file="geo@/components/address-cascader"}
+{hcmstag:include file="geo@/components/address-cascader-city"}
+{hcmstag:include file="geo@/components/address-cascader-muti"}
+<script>
+    $(function () {
+        new Vue({
+            el: ".page-container",
+            data: {
+                setting: {},
+                show: false,
+                result: '',
+                muti_result: '',
+                location_result: ''
+            },
+            mounted() {
+                this.getSettingInfo()
+            },
+            methods: {
+                submitEvent() {
+                    this.httpPost("{:url('geo/geo/setting')}", {setting: this.setting}).then(res => {
+                        if (res.status) {
+                            this.$message.success(res.msg)
+                        }
+                    })
+                },
+                getSettingInfo() {
+                    this.httpGet("{:url('geo/geo/setting')}").then(res => {
+                        if (res.status) {
+                            let {setting = {}} = res.data
+                            if (setting.length !== 0) {
+                                this.setting = setting
+                            }
+                        }
+                    })
+                },
+                confirmLocation: function (e) {
+                    console.log('confirmLocation', e)
+                    this.location_result = e
+                },
+                handleMutiChange(e) {
+                    //[{"code":[110000,110100,110101],"label":["北京市","北京市","东城区"]},{"code":[110000,110100,110102],"label":["北京市","北京市","西城区"]}]
+                    console.log(e);
+                    this.muti_result = JSON.stringify(e)
+                },
+                handleChange(e) {
+                    // {"code":[120000,120100,120103],"name":["天津市","天津市","河西区"]}
+                    console.log(e);
+                    this.result = JSON.stringify(e)
+                }
+            },
+        })
+    })
+</script>
