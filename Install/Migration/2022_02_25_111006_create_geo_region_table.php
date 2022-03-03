@@ -11,6 +11,8 @@ class CreateGeoRegionTable extends Migration
      */
     public function up(): void
     {
+        //允许更新表内容，先删除重新创建
+        Schema::dropIfExists('geo_region');
         Schema::create('geo_region', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('code')
