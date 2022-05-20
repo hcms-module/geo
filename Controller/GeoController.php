@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Geo\Controller;
 
+use App\Annotation\Api;
 use App\Annotation\View;
 use App\Application\Admin\Controller\AdminAbstractController;
-use App\Application\Admin\Lib\RenderParam;
 use App\Application\Admin\Middleware\AdminMiddleware;
 use App\Application\Geo\Model\GeoRegion;
 use App\Application\Geo\Service\GeoSettingService;
@@ -25,6 +25,12 @@ class GeoController extends AdminAbstractController
 {
 
     /**
+     * @Inject()
+     */
+    protected GeoSettingService $setting;
+
+    /**
+     * @Api()
      * 组件获取省市信息
      * @GetMapping(path="/component/geo/region/city")
      */
@@ -37,10 +43,11 @@ class GeoController extends AdminAbstractController
             ->orderBy('code', 'ASC')
             ->get();
 
-        return $this->returnSuccessJson(compact('lists'));
+        return compact('lists');
     }
 
     /**
+     * @Api()
      * 组件获取省市区信息
      * @GetMapping(path="/component/geo/region")
      */
@@ -55,25 +62,22 @@ class GeoController extends AdminAbstractController
             ->orderBy('code', 'ASC')
             ->get();
 
-        return $this->returnSuccessJson(compact('lists'));
+        return compact('lists');
     }
 
     /**
-     * @Inject()
-     */
-    protected GeoSettingService $setting;
-
-    /**
+     * @Api()
      * @GetMapping(path="setting")
      */
     public function settingInfo()
     {
         $setting = $this->setting->getGeoSetting();
 
-        return $this->returnSuccessJson(compact('setting'));
+        return compact('setting');
     }
 
     /**
+     * @Api()
      * @PostMapping(path="setting")
      */
     public function settingSave()
@@ -88,8 +92,5 @@ class GeoController extends AdminAbstractController
      * @View()
      * @GetMapping(path="index")
      */
-    public function index()
-    {
-        return RenderParam::display();
-    }
+    public function index() { }
 }
