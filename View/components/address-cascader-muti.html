@@ -15,132 +15,134 @@
 </script>
 <script>
     $(function () {
-        Vue.component('address-cascader-muti', {
-            template: '#address-cascader-muti',
-            props: {
-                default: {
-                    type: Array,
-                    default: function () {
-                        return [];
+        component_list.push({
+            key: 'address-cascader-muti',
+            c: {
+                template: '#address-cascader-muti',
+                props: {
+                    default: {
+                        type: Array,
+                        default: function () {
+                            return [];
+                        }
+                    },
+                    type: {
+                        type: String,
+                        default: "code"
+                    },
+                    size: {
+                        type: String,
+                        default: "default"
+                    },
+                    width: {
+                        type: String,
+                        default: "300px"
                     }
                 },
-                type: {
-                    type: String,
-                    default: "code"
-                },
-                size: {
-                    type: String,
-                    default: "small"
-                },
-                width: {
-                    type: String,
-                    default: "300px"
-                }
-            },
-
-            watch: {
-                type: function () {
-                    this.defaultData();
-                }
-            },
-            data: function () {
-                return {
-                    propsData: {expandTrigger: 'hover', multiple: true, value: 'code', label: 'region_name'},
-                    value: [],
-                    options: []
-                }
-            },
-            mounted: function () {
-                this.getAreaTree();
-            },
-            methods: {
-                getValue: function (defaultValue) {
-                    if (defaultValue.length === 3) {
-                        let item1 = this.options.find(function (res) {
-                            return defaultValue[0] === res.region_name;
-                        });
-                        if (!item1) {
-                            this.value = [];
-                            return
-                        }
-                        let item2 = item1.children.find(function (res) {
-                            return defaultValue[1] === res.region_name;
-                        });
-                        if (!item2) {
-                            this.value = [];
-                            return
-                        }
-                        let item3 = item2.children.find(function (res) {
-                            return defaultValue[2] === res.region_name;
-                        });
-                        if (!item3) {
-                            this.value = [];
-                            return
-                        }
-                        return [item1.code, item2.code, item3.code];
+                watch: {
+                    type: function () {
+                        this.defaultData();
                     }
                 },
-                defaultData: function () {
-                    let that = this
-                    let defaultValues = this.default;
-                    if (defaultValues && this.type === 'region_name') {
-                        let codes = [];
-                        defaultValues.forEach(function (defaultValue) {
-                            codes.push(that.getValue(defaultValue));
-                        });
-                        this.value = codes;
-                    } else {
-                        this.value = defaultValues;
-                    }
-                    this.handleChange(this.value);
-                },
-                getAreaTree: function () {
-                    let that = this
-                    this.httpGet("{:url('component/geo/region')}", {}).then((res) => {
-                        if (res.status) {
-                            let {lists = []} = res.data
-                            that.options = lists
-                            that.defaultData();
-                        }
-                    })
-                },
-                getLabel: function (code) {
-                    if (code.length === 3) {
-                        let item1 = this.options.find(function (res) {
-                            return parseInt(code[0]) === parseInt(res.code);
-                        });
-                        if (!item1) {
-                            return
-                        }
-                        let item2 = item1.children.find(function (res) {
-                            return parseInt(code[1]) === parseInt(res.code);
-                        });
-                        if (!item2) {
-                            return
-                        }
-                        let item3 = item2.children.find(function (res) {
-                            return parseInt(code[2]) === parseInt(res.code);
-                        });
-                        if (!item3) {
-                            return
-                        }
-                        return [item1.region_name, item2.region_name, item3.region_name];
-                    } else {
-                        return {code: [], detail: []};
+                data: function () {
+                    return {
+                        propsData: {expandTrigger: 'hover', multiple: true, value: 'code', label: 'region_name'},
+                        value: [],
+                        options: []
                     }
                 },
-                handleChange: function (codes) {
-                    let that = this
-                    let a = [];
-                    codes.forEach(function (code) {
-                        a.push({
-                            code: code,
-                            label: that.getLabel(code)
+                mounted: function () {
+                    this.getAreaTree();
+                },
+                methods: {
+                    getValue: function (defaultValue) {
+                        if (defaultValue.length === 3) {
+                            let item1 = this.options.find(function (res) {
+                                return defaultValue[0] === res.region_name;
+                            });
+                            if (!item1) {
+                                this.value = [];
+                                return
+                            }
+                            let item2 = item1.children.find(function (res) {
+                                return defaultValue[1] === res.region_name;
+                            });
+                            if (!item2) {
+                                this.value = [];
+                                return
+                            }
+                            let item3 = item2.children.find(function (res) {
+                                return defaultValue[2] === res.region_name;
+                            });
+                            if (!item3) {
+                                this.value = [];
+                                return
+                            }
+                            return [item1.code, item2.code, item3.code];
+                        }
+                    },
+                    defaultData: function () {
+                        let that = this
+                        let defaultValues = this.default;
+                        if (defaultValues && this.type === 'region_name') {
+                            let codes = [];
+                            defaultValues.forEach(function (defaultValue) {
+                                codes.push(that.getValue(defaultValue));
+                            });
+                            this.value = codes;
+                        } else {
+                            this.value = defaultValues;
+                        }
+                        this.handleChange(this.value);
+                    },
+                    getAreaTree: function () {
+                        let that = this
+                        this.httpGet("{:url('component/geo/region')}", {}).then((res) => {
+                            if (res.status) {
+                                let {lists = []} = res.data
+                                that.options = lists
+                                that.defaultData();
+                            }
                         })
-                    });
-                    this.$emit('change', a)
+                    },
+                    getLabel: function (code) {
+                        if (code.length === 3) {
+                            let item1 = this.options.find(function (res) {
+                                return parseInt(code[0]) === parseInt(res.code);
+                            });
+                            if (!item1) {
+                                return
+                            }
+                            let item2 = item1.children.find(function (res) {
+                                return parseInt(code[1]) === parseInt(res.code);
+                            });
+                            if (!item2) {
+                                return
+                            }
+                            let item3 = item2.children.find(function (res) {
+                                return parseInt(code[2]) === parseInt(res.code);
+                            });
+                            if (!item3) {
+                                return
+                            }
+                            return [item1.region_name, item2.region_name, item3.region_name];
+                        } else {
+                            return {code: [], detail: []};
+                        }
+                    },
+                    handleChange: function (codes) {
+                        let that = this
+                        let a = [];
+                        codes.forEach(function (code) {
+                            a.push({
+                                code: code,
+                                label: that.getLabel(code)
+                            })
+                        });
+                        this.$emit('change', a)
+                    }
                 }
             }
-        });
+        })
     })
 </script>

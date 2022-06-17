@@ -13,8 +13,9 @@
     </div>
 </script>
 <script>
-    $(function () {
-        Vue.component('address-cascader', {
+    component_list.push({
+        key: 'address-cascader',
+        c: {
             template: '#address-cascader',
             props: {
                 default: {
@@ -29,7 +30,7 @@
                 },
                 size: {
                     type: String,
-                    default: "small"
+                    default: "default"
                 },
                 width: {
                     type: String,
@@ -126,6 +127,6 @@
                     }
                 }
             }
-        });
+        }
     })
 </script>

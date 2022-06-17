@@ -4,23 +4,22 @@
         <el-dialog
                 title="定位选择"
                 width="800px"
-                :visible="show" @close="$emit('close')">
+                :model-value="show" @close="$emit('close')">
             <div>
                 <div>
                     <el-container>
                         <el-header>
-                            <el-form size="small" :inline="true" class="demo-form-inline">
+                            <el-form :inline="true" class="demo-form-inline">
                                 <el-form-item>
-                                    <address-cascader-city :default="['广东省','广州市']" type="region_name" width="200px"
-                                                           size="small"
+                                    <address-cascader-city :default="['广东省','广州市']" type="region_name" width="160px"
                                                            @change="handleChange"></address-cascader-city>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-input style="width: 200px;" clearable v-model="keyword"
+                                    <el-input style="width: 160px;" clearable v-model="keyword"
                                               placeholder="请输入搜索内容"></el-input>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-input style="width: 200px;" disabled v-model="location"
+                                    <el-input style="width: 160px;" disabled v-model="location"
                                               placeholder="坐标"></el-input>
                                 </el-form-item>
                                 <el-form-item>
@@ -52,13 +51,22 @@
                 </div>
             </div>
             <div slot="footer" class="dialog-footer">
-                <el-button size="small" @click="$emit('close')">取 消</el-button>
-                <el-button size="small" type="primary" @click="confirmEvent">确 定</el-button>
+                <el-button @click="$emit('close')">取 消</el-button>
+                <el-button type="primary" @click="confirmEvent">确 定</el-button>
             </div>
         </el-dialog>
 
     </div>
 </script>
+<style>
+    .area-get-location .el-form-item .el-input {
+        width: 160px;
+    }
+
+    .area-get-location .el-form-item {
+        margin-right: 18px;
+    }
+</style>
 <!-- 注意 KEY 的取值  -->
 <?php
 
@@ -71,8 +79,10 @@ $key = $service->getGeoSetting('geo_qq_key');
 <script>
     let map
     let marker
-    $(function () {
-        Vue.component('get-location', {
+
+    component_list.push({
+        key: "get-location",
+        c: {
             template: '#get-location',
             props: {
                 show: {
@@ -172,7 +182,12 @@ $key = $service->getGeoSetting('geo_qq_key');
                     }
                 },
                 handleChange: function (e) {
-                    this.city = e.name[1]
+                    // 市辖区 不能作为搜索词
+                    if (e.name[1] === '市辖区') {
+                        this.city = e.name[0]
+                    } else {
+                        this.city = e.name[1]
+                    }
                 },
                 searchAddress: function () {
                     if (!this.keyword) {
@@ -213,6 +228,6 @@ $key = $service->getGeoSetting('geo_qq_key');
                     this.searchAddress()
                 }
             },
-        });
+        }
     })
 </script>
