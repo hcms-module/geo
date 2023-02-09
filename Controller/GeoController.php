@@ -17,23 +17,19 @@ use Hyperf\HttpServer\Annotation\GetMapping;
 use Hyperf\HttpServer\Annotation\Middleware;
 use Hyperf\HttpServer\Annotation\PostMapping;
 
-/**
- * @Middleware(AdminMiddleware::class)
- * @Controller(prefix="/geo/geo")
- */
+#[Middleware(AdminMiddleware::class)]
+#[Controller(prefix: "/geo/geo")]
 class GeoController extends AdminAbstractController
 {
 
-    /**
-     * @Inject()
-     */
+    #[Inject]
     protected GeoSettingService $setting;
 
     /**
-     * @Api()
      * 组件获取省市信息
-     * @GetMapping(path="/component/geo/region/city")
      */
+    #[Api]
+    #[GetMapping("/component/geo/region/city")]
     public function regionCity()
     {
         $lists = GeoRegion::where('p_code', 0)
@@ -47,10 +43,10 @@ class GeoController extends AdminAbstractController
     }
 
     /**
-     * @Api()
      * 组件获取省市区信息
-     * @GetMapping(path="/component/geo/region")
      */
+    #[Api]
+    #[GetMapping("/component/geo/region")]
     public function region()
     {
         $lists = GeoRegion::where('p_code', 0)
@@ -65,10 +61,8 @@ class GeoController extends AdminAbstractController
         return compact('lists');
     }
 
-    /**
-     * @Api()
-     * @GetMapping(path="setting")
-     */
+    #[Api]
+    #[GetMapping("setting")]
     public function settingInfo()
     {
         $setting = $this->setting->getGeoSetting();
@@ -76,10 +70,8 @@ class GeoController extends AdminAbstractController
         return compact('setting');
     }
 
-    /**
-     * @Api()
-     * @PostMapping(path="setting")
-     */
+    #[Api]
+    #[PostMapping("setting")]
     public function settingSave()
     {
         $setting = $this->request->post('setting');
@@ -88,9 +80,9 @@ class GeoController extends AdminAbstractController
         return $res ? $this->returnSuccessJson() : $this->returnErrorJson();
     }
 
-    /**
-     * @View()
-     * @GetMapping(path="index")
-     */
-    public function index() { }
+    #[View]
+    #[GetMapping("")]
+    public function index()
+    {
+    }
 }

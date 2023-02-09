@@ -17,19 +17,10 @@ return [
     [
         'parent_access_id' => 0,
         'access_name' => '位置获取',
-        'uri' => 'geo/geo/index',
+        'uri' => 'geo/geo',
         'params' => '',
         'sort' => 100,
         'is_menu' => 1,
         'menu_icon' => 'line-icon-dingwei',
-        'children' => [
-            [
-                'access_name' => '配置',
-                'uri' => 'geo/geo/setting',
-                'params' => '',
-                'sort' => 100,
-                'is_menu' => 0,
-            ]
-        ]
     ]
 ];
