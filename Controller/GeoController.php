@@ -6,10 +6,10 @@ namespace App\Application\Geo\Controller;
 
 use App\Annotation\Api;
 use App\Annotation\View;
-use App\Application\Admin\Controller\AdminAbstractController;
 use App\Application\Admin\Middleware\AdminMiddleware;
 use App\Application\Geo\Model\GeoRegion;
 use App\Application\Geo\Service\GeoSettingService;
+use App\Controller\AbstractController;
 use Hyperf\Database\Model\Relations\Relation;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Annotation\Controller;
@@ -19,7 +19,7 @@ use Hyperf\HttpServer\Annotation\PostMapping;
 
 #[Middleware(AdminMiddleware::class)]
 #[Controller(prefix: "/geo/geo")]
-class GeoController extends AdminAbstractController
+class GeoController extends AbstractController
 {
 
     #[Inject]
