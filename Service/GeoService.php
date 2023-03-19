@@ -15,14 +15,10 @@ use Hyperf\Utils\Codec\Json;
 
 class GeoService
 {
-    /**
-     * @Inject()
-     */
+    #[Inject]
     private ClientFactory $client_factory;
 
-    /**
-     * @Inject()
-     */
+    #[Inject]
     private GeoSettingService $service;
 
     /**
@@ -30,9 +26,9 @@ class GeoService
      *
      * @param float $longitude
      * @param float $latitude
-     * @return array|mixed
+     * @return array
      */
-    function getInfoByLocation(float $longitude, float $latitude)
+    function getInfoByLocation(float $longitude, float $latitude): array
     {
         try {
             $key = $this->service->getGeoSetting('geo_qq_key', '');

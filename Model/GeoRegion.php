@@ -19,21 +19,21 @@ class GeoRegion extends Model
     /**
      * The table associated with the model.
      *
-     * @var string
+     * @var ?string
      */
-    protected $table = 'geo_region';
+    protected ?string $table = 'geo_region';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [];
+    protected array $fillable = [];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = ['id' => 'integer', 'code' => 'integer', 'p_code' => 'integer', 'level' => 'integer'];
+    protected array $casts = ['id' => 'integer', 'code' => 'integer', 'p_code' => 'integer', 'level' => 'integer'];
 
     function children(): HasMany
     {

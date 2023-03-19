@@ -5,9 +5,9 @@ declare(strict_types=1);
 return [
     'name' => 'Geo',
     'require' => [
-        'hcms_version' => '0.8.0',
+        'hcms_version' => '3.0.0',
         'composer' => [],
         'module' => []
     ],
-    'version' => '1.2.0'
+    'version' => '3.0.0'
 ];
