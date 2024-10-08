@@ -2,10 +2,10 @@
     <div class="area-address-cascader-muti">
         <el-cascader
                 :style="{'width':width}"
-                collapse-tags
+                :collapse-tags="collapseTags"
                 clearable
                 :size="size"
-                :value="value"
+                v-model="value"
                 :options="options"
                 filterable
                 :props="propsData"
@@ -26,6 +26,10 @@
                             return [];
                         }
                     },
+                    collapseTags: {
+                        type: Boolean,
+                        default: true
+                    },
                     type: {
                         type: String,
                         default: "code"
@@ -37,7 +41,18 @@
                     width: {
                         type: String,
                         default: "300px"
-                    }
+                    },
+                    propsData: {
+                        type: Object,
+                        default: () => {
+                            return {
+                                expandTrigger: 'hover',
+                                multiple: true,
+                                value: 'code',
+                                label: 'region_name',
+                            }
+                        }
+                    },
                 },
                 watch: {
                     type: function () {
@@ -46,17 +61,26 @@
                 },
                 data: function () {
                     return {
-                        propsData: {expandTrigger: 'hover', multiple: true, value: 'code', label: 'region_name'},
+                        // propsData: {
+                        //     expandTrigger: 'hover',
+                        //     multiple: true,
+                        //     value: 'code',
+                        //     label: 'region_name',
+                        //     checkStrictly: true,
+                        // },
                         value: [],
                         options: []
                     }
                 },
                 mounted: function () {
                     this.getAreaTree();
+                    setTimeout(() => {
+                        this.defaultData();
+                    })
                 },
                 methods: {
                     getValue: function (defaultValue) {
-                        if (defaultValue.length === 3) {
+                        if (defaultValue.length > 0) {
                             let item1 = this.options.find(function (res) {
                                 return defaultValue[0] === res.region_name;
                             });
@@ -67,9 +91,15 @@
                             let item2 = item1.children.find(function (res) {
                                 return defaultValue[1] === res.region_name;
                             });
+                            if (defaultValue.length === 1) {
+                                return [item1.code];
+                            }
                             if (!item2) {
                                 this.value = [];
                                 return
+                            }
+                            if (defaultValue.length === 2) {
+                                return [item1.code, item2.code];
                             }
                             let item3 = item2.children.find(function (res) {
                                 return defaultValue[2] === res.region_name;
@@ -78,7 +108,10 @@
                                 this.value = [];
                                 return
                             }
-                            return [item1.code, item2.code, item3.code];
+                            if (defaultValue.length === 3) {
+                                return [item1.code, item2.code, item3.code];
+                            }
+
                         }
                     },
                     defaultData: function () {
@@ -89,6 +122,7 @@
                             defaultValues.forEach(function (defaultValue) {
                                 codes.push(that.getValue(defaultValue));
                             });
+                            console.log('codes', codes)
                             this.value = codes;
                         } else {
                             this.value = defaultValues;
@@ -106,12 +140,15 @@
                         })
                     },
                     getLabel: function (code) {
-                        if (code.length === 3) {
+                        if (code && code.length > 0) {
                             let item1 = this.options.find(function (res) {
                                 return parseInt(code[0]) === parseInt(res.code);
                             });
                             if (!item1) {
                                 return
+                            }
+                            if (code.length === 1) {
+                                return [item1.region_name];
                             }
                             let item2 = item1.children.find(function (res) {
                                 return parseInt(code[1]) === parseInt(res.code);
@@ -119,13 +156,18 @@
                             if (!item2) {
                                 return
                             }
+                            if (code.length === 2) {
+                                return [item1.region_name, item2.region_name];
+                            }
                             let item3 = item2.children.find(function (res) {
                                 return parseInt(code[2]) === parseInt(res.code);
                             });
                             if (!item3) {
                                 return
                             }
-                            return [item1.region_name, item2.region_name, item3.region_name];
+                            if (code.length === 3) {
+                                return [item1.region_name, item2.region_name, item3.region_name];
+                            }
                         } else {
                             return {code: [], detail: []};
                         }
